@@ -65,7 +65,12 @@ class Predator(Circle):
 
     def breed(self, organisms, count):
         for _ in range(count):
-            organisms.append(Predator(0, 0, self.color, self.radius, self.speed + random_range(-0.1, 0.1)))
+            organisms.append(Predator(0, 0, self.color, self.radius, self.speed + random_range(-0.1, 0.1), self.sight))
+
+    def draw(self, surface):
+        # Draw fields of vision
+        # pygame.draw.circle(surface, (162, 166, 171), (int(self.x), int(self.y)), self.radius + self.sight)
+        pygame.draw.circle(surface, self.color, (int(self.x), int(self.y)), self.radius)
 
 
 class Food(Circle):
