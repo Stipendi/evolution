@@ -24,21 +24,23 @@ class Circle:
         self.x = random_range(0, screen_width)
         self.y = random_range(0, screen_height)
 
+    def distance_from(self, circle):
+        return math.sqrt((self.x - circle.x) ** 2 + (self.y - circle.y) ** 2)
+
 
 class Predator(Circle):
-    def __init__(self, x, y, color, radius, speed):
+    def __init__(self, x, y, color, radius, speed, sight=20):
         Circle.__init__(self, x, y, color, radius)
         self.energy = 500
         self.speed = speed
         self.food_eaten = 0
         self.velocity = (-1, 1)
+        self.wandering = True
+        self.sight = sight
+    def move(self, moving):
 
-    def move(self):
-        self.energy -= self.speed
-        if self.energy < 0:
-            return
-        self.x += self.velocity[0]
-        self.y += self.velocity[1]
+        self.x += self.velocity[0]/self.speed * moving
+        self.y += self.velocity[1]/self.speed * moving
 
     def get_angle(self):
         if self.velocity[1] < 0:
@@ -51,7 +53,12 @@ class Predator(Circle):
         self.velocity = (self.speed * math.cos(new_angle), self.speed * math.sin(new_angle))
 
     def steer_randomly(self):
-        self.adjust_angle(random_range(-423, 423) / 1000)
+        if self.wandering:
+            self.adjust_angle(random_range(-423, 423) / 1000)
+
+    def go_to_point(self, x, y):
+        length = math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
+        self.velocity = (self.speed * (x - self.x) / length, self.speed * (y - self.y) / length)
 
     def on_eat(self):
         self.food_eaten += 1

@@ -40,18 +40,18 @@ def main():
     pygame.display.init()
     screen = pygame.display.set_mode([width, height])
     running = True
-    fps = 60
+    fps = 0
 
     foods = []
     predators = []
 
     for _ in range(5):
-        predator = organism.Predator(0, 0, (255, 61, 194), 10, 2 * organism.random_range(1, 7))
+        predator = organism.Predator(0, 0, (255, 61, 194), 10, organism.random_range(1, 2), 50)
 
         predator.randomize_position(width, height)
         predators.append(predator)
 
-    for _ in range(50):
+    for _ in range(40):
         food = organism.Food(0, 0, 5)
         food.randomize_position(width, height)
         foods.append(food)
@@ -62,15 +62,32 @@ def main():
 
         day_over = True
         for predator in predators:
+            speed_left = predator.speed
             predator.draw(screen)
-            predator.move()
+            predator.energy -= predator.speed ** 2
+            if predator.energy < 0:
+                continue
+            while speed_left > 0:
+                if speed_left > 3:
+                    speed_using = 3
+                    speed_left -= 3
+                else:
+                    speed_using = speed_left
+                    speed_left = 0
+                predator.move(speed_using)
+                predator.steer_randomly()
+                closest = -1
+                for food in (f for f in foods if not f.eaten):
+                    if closest == -1 or food.distance_from(predator) < closest.distance_from(predator):
+                        closest = food
+                    if predator.collides_with(food):
+                        food.eaten = True
+                        predator.on_eat()
+
+                if (not closest == -1) and closest.distance_from(predator) < (predator.sight + predator.radius):
+                    predator.go_to_point(closest.x, closest.y)
             if predator.energy > 0:
                 day_over = False
-            predator.steer_randomly()
-            for food in foods:
-                if (not food.eaten) and predator.collides_with(food):
-                    food.eaten = True
-                    predator.on_eat()
 
         for food in foods:
             if not food.eaten:
