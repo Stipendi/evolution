@@ -5,6 +5,7 @@ import copy
 ENERGY = 500
 daynumber = 0
 
+
 def start_day(predators, foods, screen_width, screen_height):
     global daynumber
     old_predators = copy.deepcopy(predators)
@@ -31,38 +32,37 @@ def start_day(predators, foods, screen_width, screen_height):
         food.randomize_position(screen_width, screen_height)
 
 
-
 def main():
     width = 400
     height = 400
 
-  #  pygame.init()
-  #  pygame.display.init()
-  #  screen = pygame.display.set_mode([width, height])
+    pygame.init()
+    pygame.display.init()
+    screen = pygame.display.set_mode([width, height])
     running = True
-    fps = 0
+    fps = 60
 
     foods = []
     predators = []
 
     for _ in range(5):
-        predator = organism.Predator(0, 0, (255, 61, 194), 10, organism.random_range(0.1, 0.7))
+        predator = organism.Predator(0, 0, (255, 61, 194), 10, 2 * organism.random_range(1, 7))
 
         predator.randomize_position(width, height)
         predators.append(predator)
 
-    for _ in range(30):
+    for _ in range(50):
         food = organism.Food(0, 0, 5)
         food.randomize_position(width, height)
         foods.append(food)
 
     clock = pygame.time.Clock()
     while running:
-       # screen.fill((255, 255, 255))
+        screen.fill((255, 255, 255))
 
         day_over = True
         for predator in predators:
-      #      predator.draw(screen)
+            predator.draw(screen)
             predator.move()
             if predator.energy > 0:
                 day_over = False
@@ -72,9 +72,9 @@ def main():
                     food.eaten = True
                     predator.on_eat()
 
-      #  for food in foods:
-      #      if not food.eaten:
-      #          food.draw(screen)
+        for food in foods:
+            if not food.eaten:
+                food.draw(screen)
 
         if day_over:
             if not predators:
@@ -82,15 +82,15 @@ def main():
             else:
                 start_day(predators, foods, width, height)
 
-  #      for event in pygame.event.get():
-  #          if event.type == pygame.QUIT:
-  #              running = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-  #      pygame.display.flip()
+        pygame.display.flip()
 
 
         # Limit frames
-     #   clock.tick(fps)
+        clock.tick(fps)
 
 
 if __name__ == '__main__':

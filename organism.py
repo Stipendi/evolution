@@ -28,7 +28,7 @@ class Circle:
 class Predator(Circle):
     def __init__(self, x, y, color, radius, speed):
         Circle.__init__(self, x, y, color, radius)
-        self.energy = 5
+        self.energy = 500
         self.speed = speed
         self.food_eaten = 0
         self.velocity = (-1, 1)
